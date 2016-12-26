@@ -1,1 +1,17 @@
-# PythonTutorial
+# Python Tutorial
+
+## 目标
+1.技能
+2.机器人教程
+3.练习
+
+
+## 大纲
+
+0.准备
+1.[变量](Chapter_01/Variable.md):编程语言操作的对象
+2.控制流程
+3.容器变量
+4.OO
+5.标准库
+6.网络编程
