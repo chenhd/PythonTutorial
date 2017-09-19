@@ -96,9 +96,9 @@ question:那么问题来了，第一节中的print_XinQiji_SongPoems函数并没
 
 
 ## 函数的调用
-我们在执行单个python脚本文件的时候，是按照先后顺序执行每一行代码，这个文件则被看作是一个模块，其名字为不带拓展名的文件名。
+我们在执行单个python脚本文件的时候，是按照先后顺序执行每一行代码，这个文件则被看作是一个模块，模块名为不带拓展名的文件名。
 
-在定义顶层变量的同时，这些变量组成了一个上下文环境（context），由于python语言是跟进缩进层次来分辨层次，这里的顶层指的是没有任何缩进的定义语句，处在函数之中定义的变量不属于顶层变量。
+在定义顶层变量的同时，这些变量组成了一个上下文环境（context），由于python语言是跟进缩进层次来分辨层次，这里的顶层可以看成是没有任何缩进的定义语句，处在函数之中定义的变量不属于顶层变量。
 
 我们定义一个变量的时候，程序会在context创建这个变量，当需要使用这个变量的时候，则会在context中进行查找，如果查找不到，便会出现变量未定义的运行时错误，所以，变量一定要**先定义，后使用**。
 
@@ -110,7 +110,7 @@ b = a
 question:那么问题来了，上述代码中的两个a具体是指什么，第一个a跟第二个a是一个含义吗？请自行理解下左值与右值。
 ``
 
-因为，函数也是一种对象，定义函数的时候就相当于定义了一个函数的变量，（注意这里用的是定义这个词，由于python是不用进行类型声明的，所以，声明与定义是同时发生的，声明了有这样的一个变量，这个变量的内容被定义成了什么。）我们无法在函数定义完成之前对其进行调用。
+因为，函数也是一种对象，定义函数的时候就相当于定义了一个函数的变量，（注意这里用的是定义这个词，由于python是不用进行类型声明的，所以，声明与定义是同时发生的，声明了有这样的一个变量，这个变量的内容被定义成了什么。）我们无法在函数定义完成之前对其进行调用。在这里，函数跟数据之间的关系开始变得有点模糊了。
 
 ~~~python
 a()
@@ -158,15 +158,125 @@ c(c_num)
 
 而这种递归或互相调用的函数，并不能跟之前的代换模型所说的那样直接把代码代换进去，因为这会无穷无尽，所以需要一点修改，在代换的时候也把参数也一起代换进去。
 
+``
+tip:程序执行过程中，函数调用实际上通过一种程序栈的形式实现的，栈指的是一种模式，像汉诺塔那样，后进先出，最后放进来的盘子一定要最先拿出去，在层层连续的函数调用中，最后一个调用的函数一个要先返回，才会将控制权随着返回值回到上一层函数接着执行后续的指令，因为后进先出，所以调用下一个函数的时候，直接占用原先调用过的函数的地址，也就覆盖了上面的数据，因此函数中的数据就变成了临时的数据，也就解决了变量名混乱的问题，具体的内容请自行网上查找资料，此次不在赘述。
+``
+
 
 ## 拓展_高阶函数
+在程序设计过程中，如果将函数限制为只能以数值作为参数的化，那会严重地限制我们建立抽象的能力，经常有一些同样的程序设计模式能用于若干不同的过程，为了能把这种模式描述为相应的概念，我们需要构造一种将函数作为参数，或是以函数作为返回值的函数，这种能操作函数的函数称为高阶函数。
+
+~~~python
+# question:
+# 数值：1 + 2
+# 字符串："1" + "2"
+# 罗马数值："I" + "II"
+
+# 普通做法：
+def add_num(a, b):
+    return a+b
+num_a = 1
+num_b = 2
+tmp = add_num(num_a, num_b)
+print type(tmp), tmp
+
+
+def add_str(a, b):
+    return str(int(a)+int(b))
+str_a = "1"
+str_b = "2"
+tmp = add_str(str_a, str_b)
+print type(tmp), tmp
+
+
+Roman2Int = {
+             "I"   : 1,
+             "II"  : 2,
+             "III" : 3,
+             }
+Int2Roman = {
+             1 : "I",
+             2 : "II",
+             3 : "III",
+             }
+def add_Roman(a, b):
+    tmp = Roman2Int[a] + Roman2Int[b]
+    return Int2Roman[tmp]
+Roman_a = "I"
+Roman_b = "II"
+tmp = add_Roman(Roman_a, Roman_b)
+if ord(tmp[0]) >= ord('0') and ord(tmp[0]) <= ord('9'):
+    print type(tmp),
+else:
+    print "<type 'Roman'>",
+print tmp
 
 
 
+# 抽象做法：
+# 我们先借助上面已实现好的具体的加法操作
+def add_num(a, b):
+    return a+b
+
+def add_str(a, b):
+    return str(int(a)+int(b))
+
+Roman2Int = {
+             "I"   : 1,
+             "II"  : 2,
+             "III" : 3,
+             }
+Int2Roman = {
+             1 : "I",
+             2 : "II",
+             3 : "III",
+             }
+def add_Roman(a, b):
+    tmp = Roman2Int[a] + Roman2Int[b]
+    return Int2Roman[tmp]
+# 构造一个通用接口，调用一个实施具体加法操作的高阶函数，方便提供给用户使用
+def print_add_result(a, b):
+    res = None
+    res_type = None
+    if type(a) == type(0):
+        res = add(add_num, a, b)
+        res_type = type(res)
+    elif type(a) == type(''):
+        if ord(a[0]) >= ord('0') and ord(a[0]) <= ord('9'):
+            res = add(add_str, a, b)
+            res_type = type(res)
+        else:
+            res = add(add_Roman, a, b)
+            res_type = "<type 'Roman'>"
+    
+    print res_type, res
+# 实际执行加法的高阶函数
+def add(function, a, b):
+    return function(a, b)
+
+print_add_result(1, 2)
+print_add_result("1", "2")
+print_add_result("I", "II")
+# <type 'int'> 3
+# <type 'str'> 3
+# <type 'Roman'> III
+
+# 这样的做法方便用于对函数在不同层面的使用进行抽象，在用户使用接口的层面能够容易的进行新方式的加法功能的拓展，在具体实现的接口能够统一的为同一个操作（这里是加法这个操作）进行修改。
+
+# 比如为加法功能添加一个log
+def add(function, a, b):
+    print a, "add", b, "produce", function(a, b)
+    return function(a, b)
+# 1 add 2 produce 3
+# <type 'int'> 3
+# 1 add 2 produce 3
+# <type 'str'> 3
+# I add II produce III
+# <type 'Roman'> III
+
+~~~
 
 
-
-
-
+参考：SICP
 
 end
