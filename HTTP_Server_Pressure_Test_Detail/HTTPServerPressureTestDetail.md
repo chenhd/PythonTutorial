@@ -39,13 +39,13 @@ TCP协议的运行大致可分为三个阶段：链接创建、数据传输和�
 
 `提问：ip地址"0.0.0.0"代表的是什么意思？"127.0.0.1"呢？`
 
-通过先执行Server Demo，可以看出TCP的交互是先有一个以绑定好指定端口的socket在等待新链接的到来；接着运行的ClientDemo，客户端（client）的socket连向刚被监听的端口，当完成链接创建的“三次握手”之后，client socket的connect函数便完成并返回，下一步就可以进行数据的传输；client先发送给server数据包，然后server返回该数据包后并将其内容打印出来，然后双方断开链接。
+通过先执行Server Demo，可以看出TCP的交互是先有一个以绑定好指定端口的socket在等待新链接的到来；接着运行的Client Demo，客户端（client）的socket连向刚被监听的端口，当完成链接创建的“三次握手”之后，client socket的connect函数便完成并返回，下一步就可以进行数据的传输；然后client先发送给server数据包，server返回该数据包后并将其内容打印出来，双方结束通信断开链接。
 
 ![all_console_output](./all_console_output.png "all console output")
 
 <h3 id="data">数据包</h3>
 
-从上面打印出的log看，不足以让我们详细的了解C／S之间的交互过程，可以通过借助[网络包分析工具](https://www.wireshark.org/)来了解通信过程中TCP协议发送了哪些数据包。
+从上面打印出的log看，不足以让我们详细地了解C／S之间的交互过程，可以通过借助[网络包分析工具](https://www.wireshark.org/)来了解通信过程中TCP协议发送了哪些数据包。
 
 ![all_packet](./TCP_all_packet.png "all packet")
 * [数据包文件](./TCP_all_packet.pcapng)
@@ -76,7 +76,7 @@ TCP链接是全双工的，即表示数据在两个方向上能同时传递数�
 
 通过抓取访问本地启动的**SimpleHTTPServer**，我们来了解下位于应用层的HTTP协议是如何通过TCP协议来进行通信的。
 
-`Tip: SimpleHTTPServer可通过命令“python -m SimpleHTTPServer”启动，项目目录下已有一份已抓取好的网络包（001_1_HTTP_content.pcapng）`
+`Tip: SimpleHTTPServer可通过命令“python -m SimpleHTTPServer”启动，项目目录下已有一份已抓取好的网络包（HTTP_content.pcapng）`
 
 ![HTTP_content](./HTTP_content.png "HTTP content")
 * [HTTPClientDemo.py](./HTTPClientDemo.py)
@@ -99,7 +99,7 @@ Connection: keep-alive
 
 * [HTTPClientDemoMultiAsync.py](./HTTPClientDemoMultiAsync.py)（并发Demo）
 
-在笔者的机器上，通过执行该并发程序，发起500个并发请求至服务器，响应正常，这样就可以确认我们的测试服务器是没有问题的，能负载住这样的并发压力（笔者并不是一开始就选中Nginx的，曾试用其他HTTP服务器，比如python自带的SimpleHTTPServer，但效果不理想，经过多次挑选才找到的Nginx，要验证问题，多个方案相互比较也是很重要的）。
+在笔者的机器上，通过执行该并发程序，发起500个并发请求至服务器，响应正常，这样就可以确认我们的测试服务器是没有问题的，能负载住这样的并发压力（笔者并不是一开始就选中Nginx的，曾试用过其他HTTP服务器，比如python自带的SimpleHTTPServer，但效果不理想，经过多次挑选才找到的Nginx，要验证问题，多个方案相互比较也是很重要的）。
 
 但当反复执行这个并发程序多次的时候，出现了异常报错的信息。
 
@@ -166,9 +166,11 @@ Connection: close
 * wiki
 * 其他网络上的资料
 
+<!-- 
 <h2 id="last">写在最后</h2>
 
 在结束的地方，想问下读者是否已经掌握文章的主题？
 
-笔者认为没有，因为仅仅通过阅读一篇文章，仅仅只能知道有这么一回事；即便跟着文章的步伐重现所有流程，也只能是知道文章所说的是怎么一回事，当然，一般文章的目的也是如此。但是，读者不知道的是，作者一开始是怎么发现一个问题，如何进行问题的定位，还有解决这个问题，最后，又是如何将这个问题展示给其他人，展示过程中各种细节的选择。而这些，才是一个学习的过程，实践起来，就是一个从读者转变为作者的过程，尽管本文瑕疵偏多，但对笔者自身来说，也是收获满满。
+笔者认为没有，因为仅仅通过阅读一篇文章，仅仅只能知道有这么一回事；即便跟着文章的步伐重现所有流程，也只能是知道文章所说的是怎么一回事，当然，一般文章的目的也是如此。但是，读者不知道的是，作者一开始是怎么发现一个问题，如何进行问题的定位，还有解决这个问题，最后，又是如何将这个问题展示给其他人，展示过程中各种细节的选择。而这些，才是一个学习的过程，实践起来，就是一个从读者转变为作者的过程，尽管本文瑕疵偏多，但对笔者自身来说，也是收获满满。 
+-->
 

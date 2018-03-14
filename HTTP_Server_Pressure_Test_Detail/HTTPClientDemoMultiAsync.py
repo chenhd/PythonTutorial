@@ -29,8 +29,8 @@ Host: 10.20.79.147:8000
 Connection: close
 
 '''
-        # self.buffer = send_data_alive
-        self.buffer = send_data_close
+        self.buffer = send_data_alive
+        # self.buffer = send_data_close
 
     def handle_connect(self):
         pass
@@ -44,8 +44,7 @@ Connection: close
             pass
             if len(data) == 192:
                 self.close()
-            # print len(data)
-            # print repr(data)
+
 
     def writable(self):
         return (len(self.buffer) > 0)
